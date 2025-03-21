@@ -2,7 +2,7 @@
 
 ## What is it ?
 
-These scripts allow synchronizing `.ass` subtitles the Dragon Box (or other editions with similar synchronization) to the Jartcut edition of DBZ, which is an abridged version available here: [https://nyaa.si/view/1936292](https://nyaa.si/view/1936292).
+These scripts allow synchronizing `.ass` subtitles synced to Dragon Box (or other editions with similar synchronization) to the Jartcut edition of DBZ, which is an abridged version available here: [https://nyaa.si/view/1936292](https://nyaa.si/view/1936292).
 
 ## How to use it?
 
