@@ -17,7 +17,7 @@ These scripts allow synchronizing `.ass` subtitles synced to Dragon Box (or othe
      `DBZ 185 - Fuji - R2J DVD video synced - Team Mirolo.txt` and `DBZ185DVD.ass` would match.
    - ⚠ **Note:** The `Sync_subtitles` script automatically removes unused subtitle lines—i.e., those synchronized with audio track sections not used in the `.kdenlive` project. However, some lines might not be deleted, because it's hard to make very accurate rules to delete all useless lines. These lines will overlap existing ones so be sure to check and manually remove any unwanted overlapping lines.
 
-5. **Finally, run the script** `3-Merge_subs_for_Jartcut.py`, which uses `subdigest.py` to merge the subtitles from the `synced` folder into final subtitles for the Jartcut edition of DBZ. A **subtitles for Jartcut** folder will be created, containing the final merged subtitles.
+5. **Finally, run the script** `3-Merge_subs_for_Jartcut.py`, which uses `subdigest.py` to merge the subtitles from the `synced` folder into final subtitles for the Jartcut edition of DBZ. A `subtitles for Jartcut` folder will be created, containing the final merged subtitles.
 
 ## Technical Details
 
