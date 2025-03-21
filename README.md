@@ -4,6 +4,8 @@
 
 These scripts allow synchronizing `.ass` subtitles synced to Dragon Box (or other editions with similar synchronization) to the Jartcut edition of DBZ, which is an abridged version available here: [https://nyaa.si/view/1936292](https://nyaa.si/view/1936292).
 
+Note that it only works with  `.ass` file format.
+
 ## Requirements
 
 1. **Install [Python 3](https://www.python.org/downloads/) and add it to the PATH.**
