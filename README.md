@@ -9,7 +9,7 @@ Note that it only works with  `.ass` file format.
 ## Requirements
 
 1. **Install [Python 3](https://www.python.org/downloads/) and add it to the PATH.**
-2. Then, install `ass` python module (only required to merge subtitles at the end) with this with this command :
+2. Then, install `ass` python module (only required to merge subtitles at the end) with this command :
 ### `pip install ass`
 
 ## How to use it?
