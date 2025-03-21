@@ -4,15 +4,22 @@
 
 These scripts allow synchronizing `.ass` subtitles synced to Dragon Box (or other editions with similar synchronization) to the Jartcut edition of DBZ, which is an abridged version available here: [https://nyaa.si/view/1936292](https://nyaa.si/view/1936292).
 
-## How to use it?
+## Requirements
 
 1. **Install [Python 3](https://www.python.org/downloads/) and add it to the PATH.**
+2. Then, install `ass` python module with this with this command : `pip install ass` (it's required for subdigest)
 
-2. **Place the Kdenlive project files** (`.kdenlive` extension) in the **kdenlive** folder.
+## How to use it?
 
-3. **Run the script** `1-Extract_timecodes.py`—this will create a `timecodes` folder containing `.txt` files, which will be needed for the next step.
 
-4. **Place the subtitle `.ass` files** in the **subtitles** folder, then run the script `2-Sync_subtitles.py`. A **"synced"** folder will be created, and the synchronized subtitles will be saved there.  
+
+1. **Place the Kdenlive project files** (`.kdenlive` extension) in the **kdenlive** folder.
+
+2. **Run the script** `1-Extract_timecodes.py`—this will create a `timecodes` folder containing `.txt` files, which will be needed for the next step.
+
+3. **Place the `.ass` subtitles files** you want to sync in the **subtitles** folder
+   
+4. Run the script `2-Sync_subtitles.py`. A **"synced"** folder will be created, and the synchronized subtitles will be saved there.  
    - ⚠ **Important:** For this script to work, the ass subtitles located in the `subtitles` folder and the `.txt` files in the `timecodes` folder must share the same numbering format (nn or nnn). Example:  
      `DBZ 185 - Fuji - R2J DVD video synced - Team Mirolo.txt` and `DBZ185DVD.ass` would match.
    - ⚠ **Note:** The `Sync_subtitles` script automatically removes unused subtitle lines—i.e., those synchronized with audio track sections not used in the `.kdenlive` project. However, some lines might not be deleted, because it's hard to make very accurate rules to delete all useless lines. These lines will overlap existing ones so be sure to check and manually remove any unwanted overlapping lines.
