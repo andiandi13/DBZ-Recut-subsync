@@ -9,7 +9,8 @@ Note that it only works with  `.ass` file format.
 ## Requirements
 
 1. **Install [Python 3](https://www.python.org/downloads/) and add it to the PATH.**
-2. Then, install `ass` python module with this with this command : `pip install ass` (it's required for subdigest)
+2. Then, install `ass` python module with this with this command :
+### `pip install ass`
 
 ## How to use it?
 
