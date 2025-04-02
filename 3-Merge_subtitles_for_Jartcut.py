@@ -152,7 +152,7 @@ merging_plan = {
 
 # Fonction pour extraire le numéro du fichier sans tenir compte des zéros initiaux
 def extract_number_from_filename(filename):
-    match = re.search(r'(\d+)\.ass', filename)
+    match = re.search(r'(\d+)(?=[^0-9]*\.ass)', filename)
     if match:
         return match.group(1).zfill(3)
     return None
