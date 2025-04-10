@@ -32,8 +32,10 @@ def process_kdenlive_file(file_path):
     tree = ET.parse(file_path)
     root = tree.getroot()
     
-    # Dictionnaire associant chaque 'chain id' à une piste audio source
+    # Dictionnaire associant chaque 'chain id' ou 'producer id' à une piste audio source
     video_synced_sources = {}
+    
+    # Vérifier les <chain> pour "video synced"
     for chain in root.findall(".//chain"):
         resource_elem = chain.find(".//property[@name='resource']")
         if resource_elem is not None and "video synced" in resource_elem.text.lower():
@@ -41,6 +43,15 @@ def process_kdenlive_file(file_path):
             resource_filename = os.path.basename(resource_elem.text.strip())
             audio_source_name, _ = os.path.splitext(resource_filename)
             video_synced_sources[chain_id] = audio_source_name
+    
+    # Vérifier les <producer> pour "video synced"
+    for producer in root.findall(".//producer"):
+        resource_elem = producer.find(".//property[@name='resource']")
+        if resource_elem is not None and "video synced" in resource_elem.text.lower():
+            producer_id = producer.get("id")
+            resource_filename = os.path.basename(resource_elem.text.strip())
+            audio_source_name, _ = os.path.splitext(resource_filename)
+            video_synced_sources[producer_id] = audio_source_name
     
     grouped_results = {source: [] for source in video_synced_sources.values()}
     
@@ -74,6 +85,7 @@ def process_kdenlive_file(file_path):
                 timeline_start = timeline_position + offset
                 timeline_end = timeline_start + clip_duration
                 
+                # Vérifier si le producteur correspond à une source audio synchronisée
                 if producer in video_synced_sources:
                     audio_source = video_synced_sources[producer]
                     grouped_results[audio_source].append({
