@@ -147,9 +147,9 @@ merging_plan = {
     "Dragon Ball Z Jartcut 133.ass": ["283", "284"],
     "Dragon Ball Z Jartcut 134.ass": ["285", "286"],
     "Dragon Ball Z Jartcut 135.ass": ["287"],
-    "Dragon Ball Z Jartcut 136.ass": ["289", "290", "291"]
+    "Dragon Ball Z Jartcut 136.ass": ["289", "290", "291"],
     "Dragon Ball Z Jartcut 006.5.ass": ["009", "010", "014"],
-    "Dragon Ball Z Jartcut 031.5.ass": ["003"],
+    "Dragon Ball Z Jartcut 031.5.ass": ["052", "055", "056", "057"],
     "Dragon Ball Z Jartcut 055.5.ass": ["118", "119"],
     "Dragon Ball Z Jartcut 060.5.ass": ["124", "125"],
     "Dragon Ball Z Jartcut 084.5.ass": ["169", "170", "171", "172", "174"],
