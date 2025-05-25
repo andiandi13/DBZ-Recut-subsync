@@ -32,10 +32,8 @@ def process_kdenlive_file(file_path):
     tree = ET.parse(file_path)
     root = tree.getroot()
     
-    # Dictionnaire associant chaque 'chain id' ou 'producer id' à une piste audio source
     video_synced_sources = {}
     
-    # Vérifier les <chain> pour "video synced"
     for chain in root.findall(".//chain"):
         resource_elem = chain.find(".//property[@name='resource']")
         if resource_elem is not None and "video synced" in resource_elem.text.lower():
@@ -44,7 +42,6 @@ def process_kdenlive_file(file_path):
             audio_source_name, _ = os.path.splitext(resource_filename)
             video_synced_sources[chain_id] = audio_source_name
     
-    # Vérifier les <producer> pour "video synced"
     for producer in root.findall(".//producer"):
         resource_elem = producer.find(".//property[@name='resource']")
         if resource_elem is not None and "video synced" in resource_elem.text.lower():
@@ -59,8 +56,8 @@ def process_kdenlive_file(file_path):
         if playlist.get("id") == "main_bin":
             continue
         
-        timeline_position = 0.0  # Position de base sur la timeline en secondes
-        clip_count = 0  # Compteur pour l'application du décalage cumulé
+        timeline_position = 0.0
+        clip_count = 0
         
         for element in playlist:
             if element.tag == "blank":
@@ -79,13 +76,12 @@ def process_kdenlive_file(file_path):
                 clip_out = timecode_to_seconds(clip_out_str)
                 clip_duration = clip_out - clip_in
                 
-                clip_count += 1  # Tous les clips participent au décalage cumulé
-                offset = FRAME_OFFSET * clip_count  # Décalage cumulé
+                clip_count += 1
+                offset = FRAME_OFFSET * clip_count
                 
                 timeline_start = timeline_position + offset
                 timeline_end = timeline_start + clip_duration
                 
-                # Vérifier si le producteur correspond à une source audio synchronisée
                 if producer in video_synced_sources:
                     audio_source = video_synced_sources[producer]
                     grouped_results[audio_source].append({
@@ -95,41 +91,36 @@ def process_kdenlive_file(file_path):
                         'source_out': clip_out
                     })
                 
-                timeline_position += clip_duration  # Mise à jour de la position dans la timeline
+                timeline_position += clip_duration
     
     return grouped_results
 
 def main():
-    global_grouped = {}
-    
-    # Vérifier si le dossier 'kdenlive' existe
     if os.path.isdir(KDENLIVE_FOLDER):
-        # Parcourir tous les fichiers .kdenlive du dossier
         for file_path in glob.glob(os.path.join(KDENLIVE_FOLDER, "*.kdenlive")):
+            kdenlive_name = os.path.splitext(os.path.basename(file_path))[0]
+            output_subfolder = os.path.join(TIMECODES_FOLDER, kdenlive_name)
+            os.makedirs(output_subfolder, exist_ok=True)
+
             file_results = process_kdenlive_file(file_path)
             for audio_source, clips in file_results.items():
-                if audio_source not in global_grouped:
-                    global_grouped[audio_source] = []
-                global_grouped[audio_source].extend(clips)
+                if not clips:
+                    continue
+                
+                sorted_clips = sorted(clips, key=lambda clip: clip['timeline_start'])
+                output_lines = [f"{'Timeline Start':<16} {'Timeline End':<16} {'Source Start':<16} {'Source End':<16}"]
+                
+                for clip in sorted_clips:
+                    line = f"{seconds_to_timecode(clip['timeline_start']):<16} {seconds_to_timecode(clip['timeline_end']):<16} " \
+                           f"{seconds_to_timecode(clip['source_in']):<16} {seconds_to_timecode(clip['source_out']):<16}"
+                    output_lines.append(line)
+                
+                output_file = os.path.join(output_subfolder, f"{audio_source}.txt")
+                with open(output_file, "w", encoding="utf-8") as f:
+                    f.write("\n".join(output_lines))
+                print(f"Timecodes pour '{audio_source}' enregistrés dans : {output_file}")
     else:
         print(f"Le dossier 'kdenlive' n'existe pas dans le répertoire courant.")
-    
-    for audio_source, clips in global_grouped.items():
-        if not clips:
-            continue
-        
-        sorted_clips = sorted(clips, key=lambda clip: clip['timeline_start'])
-        output_lines = [f"{'Timeline Start':<16} {'Timeline End':<16} {'Source Start':<16} {'Source End':<16}"]
-        
-        for clip in sorted_clips:
-            line = f"{seconds_to_timecode(clip['timeline_start']):<16} {seconds_to_timecode(clip['timeline_end']):<16} " \
-                   f"{seconds_to_timecode(clip['source_in']):<16} {seconds_to_timecode(clip['source_out']):<16}"
-            output_lines.append(line)
-        
-        output_file = os.path.join(TIMECODES_FOLDER, f"{audio_source}.txt")
-        with open(output_file, "w", encoding="utf-8") as f:
-            f.write("\n".join(output_lines))
-        print(f"Les timecodes extraits pour la piste audio '{audio_source}' ont été enregistrés dans {output_file}")
 
 if __name__ == "__main__":
     main()
