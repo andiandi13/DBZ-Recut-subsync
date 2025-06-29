@@ -3,7 +3,7 @@ import subprocess
 
 # Dossier contenant les fichiers .ass
 input_directory = 'synced'
-output_directory = 'subtitles for Jartcut - Subdigest'
+output_directory = 'subtitles for Jartcut'
 
 if not os.path.exists(output_directory):
     os.makedirs(output_directory)
