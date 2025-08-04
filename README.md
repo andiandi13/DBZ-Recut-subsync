@@ -29,23 +29,24 @@ Avoid filenames containing numbers other than the episode numbers to prevent iss
 
 ## Important Notes ⚠
 
-- The `Sync_subtitles` script will automatically remove unused subtitle lines from the raw subtitles. Since it's hard to code accurate rules to delete all useless lines because it can be risky and includes lines that should be kept, there's a possibiity that you'll find an extra unused line here and there. However, after knowing this, we edited the timeline of all project files to prevent this from happening. The only way some unused line can still be present is if your subtitles display lines _way_ before a character starts speaking, or _way_ before he ends speaking, so it shouldn't happen, but it's good to know just in case.
+- The `Sync_subtitles` script will automatically remove unused subtitle lines from the raw subtitles. Since it's hard to code accurate rules to delete all useless lines because it can be risky and includes lines that should be kept, there's a possibiity that you'll find an extra unused line here and there. However, after knowing this, we edited the timeline of all project files to prevent this from happening. The only way some unused line can still be present is if your subtitles display lines _way before_ a character starts speaking, or _way after_ he ends speaking, so it shouldn't happen, but it's good to know just in case.
 
-- Also, there're some lines that you have to manually edit, because we edited the voice to remove a part of it, therefore the subtitle must be adapted accordingly. You can find all lines to edit [here](https://docs.google.com/spreadsheets/d/1pw—Lhc-u3Rt4GSl_2UvieFWkNJ26srMeyL7d5OQ_XM/edit?gid=1686722232#gid=1686722232)
+- Also, there're some lines that you have to manually edit, because we edited the voice clip to remove a part of it, therefore the subtitle must be adapted accordingly. You can find all lines to edit [here](https://docs.google.com/spreadsheets/d/1pw—Lhc-u3Rt4GSl_2UvieFWkNJ26srMeyL7d5OQ_XM/edit?gid=1686722232#gid=1686722232)
 
-- Similarly, some lines can overlap each other. It's mostly - or completely, due to the audio edits mentioned previously and it will affect very few subtitle lines. You just have to retime those lines so that they don't overlap (you can do it in softwares like Aegisub or subtitles edit, or even with any text editor)
+- Another thing to know is that some lines can overlap each other. It's mostly due to the audio edits mentioned previously, so it will affect very few subtitle lines. You just have to retime those lines so that they don't overlap (you can do it in softwares like Aegisub or SubtitleEdit, or even with any text editor)
 
 ## Technical Details
 - For the `1-Extract_timecodes.py` script to function properly, the **audio tracks in the project must contain the phrase** `"video synced"` in their name (this is found in the `<property name="resource">` section of the `.kdenlive` file).
-This is currently the only way I found to ensure the script calculates timecodes only for broadcast audio tracks (which have names ending by "video synced") while ignoring extra timeline clips (which are unnecessary for subtitle resynchronization and may disrupt proper synchronization).
-
-- Kdenlive does not store timeline clips timecodes in it"s project files, so I had to recalculate them using the available project data:  
+This is a way I found to ensure the script calculates timecodes only for broadcast audio tracks (which have names ending by "video synced") while ignoring extra timeline clips (which are unnecessary for subtitle resynchronization and may disrupt proper synchronization).
+Kdenlive does not store timeline clips timecodes in it"s project files, so I had to recalculate them using the available project data:  
   - The **duration** of each track
   - Their **associated playlist (Track)**
   - The **duration of empty spaces (blank length)** between clips
   However, when calculated this way, the timecodes were **slightly off**. After analysis,, it appears that each new clip on the timeline loses approximately one video frame (~42ms).
   **Workaround:** To compensate, each clip's placement timecode is shifted +42ms per clip position (e.g., +42ms at position 1, +84ms at position 2, etc.).
-  This adjustment results in **fairly accurate** timecodes. Some subtitles may still be off by **one or two video frames**, but overall synchronization remains good. If frame-perfect synchronization isn't required, the result is excellent.
+  This adjustment results in **fairly accurate** timecodes. Some subtitles may still be off by **one or two video frames**, but overall synchronization remains good. If frame-perfect synchronization isn't required, the result is excellent. (PS: If you really want your subtitle lines to end along with the keyframe and not bleed into the next frame, you can use [this](https://github.com/andiandi13/SushiFix) script I made.)
+
+- 
 
 - Further compatibility of the scripts
 
