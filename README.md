@@ -54,6 +54,6 @@ What we should do is: split the audio track at the end, add the “Asubcut” ef
 
 <img width="855" height="488" alt="2025-08-02_23_37_11-046____708x480_23 98fps_-_Kdenlive" src="https://github.com/user-attachments/assets/55528b94-1068-458a-b803-03838c50ce53" />
 
-- Further compatibility of the scripts
+- Compatibility of the script with other projects
 
-These scripts are not made specifically for Dragon Ball Z serie. Actually, they can be compatible with any recut project made with kdenlive, but you will have to edit scripts so that they don't look for audio files named "video synced" (unless you rename your audio track like that) and change output filenames in the merging script at the end.
+These scripts are not made specifically for Dragon Ball Z serie. Actually, they can be compatible with any project made with kdenlive, but you will have to edit scripts so that they don't look for audio files named "video synced" (unless you rename your audio track like that) and change output filenames in the merging script at the end.
