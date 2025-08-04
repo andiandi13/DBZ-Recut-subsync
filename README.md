@@ -46,13 +46,13 @@ Kdenlive does not store timeline clips timecodes in it"s project files, so I had
   **Workaround:** To compensate, each clip's placement timecode is shifted +42ms per clip position (e.g., +42ms at position 1, +84ms at position 2, etc.).
   This adjustment results in **fairly accurate** timecodes. Some subtitles may still be off by **one or two video frames**, but overall synchronization remains good. If frame-perfect synchronization isn't required, the result is excellent. (PS: If you really want your subtitle lines to end along with the keyframe and not bleed into the next frame, you can use [this](https://github.com/andiandi13/SushiFix) script I made.)
 
-I coded something in the script to prevent it from generating subtitle lines that aren’t used in the project (the issue I mentioned earlier).
+- I coded something in the script to prevent it from generating subtitle lines that aren’t used in the project (the issue I mentioned earlier).
 First, you need to understand how it happens. Imagine a timeline with video and audio clips. It's cut at multiple edit points, creating many smaller clips. The issue is that sometimes, a subtitle line starts near the end of an audio clip—because just after that clip (i.e., if it hadn't been cut), there's a voice.
 But since the subtitle line’s start time is often set before the voice actually plays, the line may end up being included in the audio clip we use.
 So, the feature I added to the script is: if an audio clip has an effect named “Asubcut” (which is a native Kdenlive audio effect—I chose it solely because it’s a mnemonic: "A sub(title) cut"), then any subtitle lines included in that audio clip will be discarded by the script.
 What we should do is: split the audio track at the end, add the “Asubcut” effect to the final clip, and disable the effect (since we don’t actually use it—it just acts as a cue for the script). Then, save the Kdenlive project and run the script on it. That's what we did for the project files of DBZ Recut so that you can synchronize your own subtitles without extra unused lines.
 
-<img width="1710" height="976" alt="2025-08-02_23_37_11-046____708x480_23 98fps_-_Kdenlive" src="https://github.com/user-attachments/assets/55528b94-1068-458a-b803-03838c50ce53" />
+<img width="855" height="488" alt="2025-08-02_23_37_11-046____708x480_23 98fps_-_Kdenlive" src="https://github.com/user-attachments/assets/55528b94-1068-458a-b803-03838c50ce53" />
 
 - Further compatibility of the scripts
 
