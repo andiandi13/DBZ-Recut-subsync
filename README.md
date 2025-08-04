@@ -8,7 +8,7 @@ Note that it only works with  `.ass` file format.
 
 ## Requirements
 
-1. **Install [Python 3](https://www.python.org/downloads/) and check the "Add Python.exe to PATH.** box when installing (if you installed it without checking this box, either look on the internet how to add it to windows PATH manually, or reinstall it)
+1. **Install [Python 3](https://www.python.org/downloads/) and check the "Add Python.exe to PATH."** box when installing (if you installed it without checking this box, either look on the internet how to add it to windows PATH manually, or reinstall it)
 2. Then, install `ass` python module (only required to merge subtitles at the end) with this command through Windows cmd.exe or Powershell - not inside Python shell:
 ### `pip install ass`
 
@@ -20,15 +20,18 @@ Note that it only works with  `.ass` file format.
 
 3. **Place the `.ass` subtitles files** you want to sync in the **subtitles** folder
    
-4. Run the script `2-Sync_subtitles.py`. A **"synced"** folder will be created, and the synchronized subtitles will be saved there.  
+4. Run the script `2-Sync_subtitles.py`. A **"synced"** folder will be created, and the synchronized subtitles (unmerged) will be saved there.  
    - **Important:** For this script to work, the ass subtitles located in the `subtitles` folder and the `.txt` files in the `timecodes` folder must share the same numbering format (nn or nnn). Example:  
      `DBZ 185 - Fuji - R2J DVD video synced - Team Mirolo.txt` and `DBZ185DVD.ass` would match.
+Avoid filenames containing numbers other than the episode numbers to prevent issues from occurring.
 
-5. **Finally, run the script** `3-Merge_subtitles_for_Jartcut.py`, which uses `subdigest.py` to merge the subtitles from the `synced` folder into final subtitles for the Jartcut edition of DBZ. A `subtitles for Jartcut` folder will be created, containing the final merged subtitles.
+5. **Finally, run the script** `3-Merge_subtitles_for_Jartcut.py`, which uses `subdigest.py` to merge the subtitles from the `synced` folder into subtitles matching the episodes DBZ Recut edition. A folder named `subtitles for Jartcut` will be created, containing the final subtitles.
 
 ## Important Notes ⚠
 
-- The `Sync_subtitles` script will automatically remove unused subtitle lines from the raw subtitles. However, some lines might not be deleted (it will concern hardly any subtitle lines though), since it's hard to code accurate rules to delete all useless lines because it can be risky and includes lines that should be kept. These unwanted lines will overlap existing ones, so be sure to check and manually remove any overlapping lines that shouldn't be kept.
+- The `Sync_subtitles` script will automatically remove unused subtitle lines from the raw subtitles. Since it's hard to code accurate rules to delete all useless lines because it can be risky and includes lines that should be kept, there's a possibiity that you'll find an extra unused line here and there. However, after knowing this, we edited the timeline of all project files to prevent this from happening. The only way some unused line can still be present is if your subtitles display lines _way_ before a character starts speaking, or _way_ before he ends speaking, so it shouldn't happen, but it's good to know just in case.
+
+- Still regarding subtitles, there're some lines that you have to manually edit, because we edited the voice to remove a part of it, therefore the subtitle must be adapted accordingly. You can find all lines to edit [here](https://docs.google.com/spreadsheets/d/1pw—Lhc-u3Rt4GSl_2UvieFWkNJ26srMeyL7d5OQ_XM/edit?gid=1686722232#gid=1686722232)
 
 - Similarly, some lines can overlap each other, even though there are used lines. It's due to audio editing and  will affect very few subtitle lines ass well.
 
