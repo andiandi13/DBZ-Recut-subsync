@@ -31,7 +31,7 @@ Avoid filenames containing numbers other than the episode numbers to prevent iss
 
 - The `Sync_subtitles` script will automatically remove unused subtitle lines from the raw subtitles. Since it's hard to code accurate rules to delete all useless lines because it can be risky and includes lines that should be kept, there's a possibiity that you'll find an extra unused line here and there. However, after knowing this, we edited the timeline of all project files to prevent this from happening. The only way some unused line can still be present is if your subtitles display lines _way before_ a character starts speaking, or _way after_ he ends speaking, so it shouldn't happen, but it's good to know just in case.
 
-- Also, there're some lines that you have to manually edit, because we edited the voice clip to remove a part of it, therefore the subtitle must be adapted accordingly. You can find all lines to edit [here](https://docs.google.com/spreadsheets/d/1pw—Lhc-u3Rt4GSl_2UvieFWkNJ26srMeyL7d5OQ_XM/edit?gid=1686722232#gid=1686722232)
+- Also, there're some lines that you have to manually edit, because we edited the voice clip to remove a part of it, therefore the subtitle must be adapted accordingly. You can find all lines to edit [here](https://docs.google.com/spreadsheets/d/1pw--Lhc-u3Rt4GSl_2UvieFWkNJ26srMeyL7d5OQ_XM/edit?usp=sharing)
 
 - Another thing to know is that some lines can overlap each other. It's mostly due to the audio edits mentioned previously, so it will affect very few subtitle lines. You just have to retime those lines so that they don't overlap (you can do it in softwares like Aegisub or SubtitleEdit, or even with any text editor)
 
