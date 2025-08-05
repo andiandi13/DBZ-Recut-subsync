@@ -46,6 +46,8 @@ Kdenlive does not store timeline clips timecodes in it"s project files, so I had
   **Workaround:** To compensate, each clip's placement timecode is shifted +42ms per clip position (e.g., +42ms at position 1, +84ms at position 2, etc.).
   This adjustment results in **fairly accurate** timecodes. Some subtitles may still be off by **one or two video frames**, but overall synchronization remains good. If frame-perfect synchronization isn't required, the result is excellent. (PS: If you really want your subtitle lines to end along with the keyframe and not bleed into the next frame, you can use [this](https://github.com/andiandi13/SushiFix) script I made.)
 
+- If a clip is disabled in kdenlive, subtitles of this clip - if it contains a voice - will still be generated. We've actually used this techique to generate subtitles lines for AI isolated vocals, that we aligned with a disabled audio clip containing the same voice so that it syncs the associated subtitle line.
+
 - I coded something in the script to prevent it from generating subtitle lines that aren’t used in the project (the issue I mentioned earlier).
 First, you need to understand how it happens. Imagine a timeline with video and audio clips. It's cut at multiple edit points, creating many smaller clips. The issue is that sometimes, a subtitle line starts near the end of an audio clip—because just after that clip (i.e., if it hadn't been cut), there's a voice.
 But since the subtitle line’s start time is often set before the voice actually plays, the line may end up being included in the audio clip we use.
