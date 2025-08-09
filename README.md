@@ -18,7 +18,7 @@ Note that it only works with  `.ass` file format.
 
 2. **Run the script** `1-Extract_timecodes.py`—this will create a `timecodes` folder containing `.txt` files, which will be needed for the next step.
 
-3. **Place the `.ass` subtitles files** you want to sync in the **subtitles** folder
+3. **Place all your `.ass` subtitles files** you want to sync in the **subtitles** folder (the script supports Batch conversion)
    
 4. Run the script `2-Sync_subtitles.py`. A **"synced"** folder will be created, and the synchronized subtitles (unmerged) will be saved there.  
    - **Important:** For this script to work, the ass subtitles located in the `subtitles` folder and the `.txt` files in the `timecodes` folder must share the same numbering format (nn or nnn). Example:  
