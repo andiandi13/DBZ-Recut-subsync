@@ -33,17 +33,21 @@ def merge_files(merge_target, files_to_merge):
 
 # Fonction principale
 def main():
-    for root, dirs, _ in os.walk(input_directory):
-        if root == input_directory:
-            for subfolder in dirs:
-                subfolder_path = os.path.join(input_directory, subfolder)
-                ass_files = [os.path.join(subfolder_path, f)
-                             for f in os.listdir(subfolder_path)
-                             if f.endswith('.ass')]
-                if ass_files:
-                    output_filename = f"{subfolder}.ass"
-                    print(f"Fusion avec subdigest pour le dossier '{subfolder}'")
-                    merge_files(output_filename, ass_files)
+    for root, dirs, files in os.walk(input_directory):
+        ass_files = [os.path.join(root, f) for f in files if f.endswith('.ass')]
+        if ass_files:
+            # Reproduit le chemin relatif depuis input_directory
+            rel_path = os.path.relpath(root, input_directory)
+            output_subfolder = os.path.join(output_directory, rel_path)
+
+            # Crée le dossier de sortie s'il n'existe pas
+            os.makedirs(output_subfolder, exist_ok=True)
+
+            # Nom du fichier de sortie = nom du dossier courant + ".ass"
+            output_filename = os.path.basename(root) + '.ass'
+
+            print(f"Fusion avec subdigest pour le dossier '{rel_path}'")
+            merge_files(os.path.join(rel_path, output_filename), ass_files)
 
 if __name__ == '__main__':
     main()
