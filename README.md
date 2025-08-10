@@ -9,8 +9,7 @@ Note that it only works with  `.ass` file format.
 ## Requirements
 
 1. **Install [Python 3](https://www.python.org/downloads/) and check the "Add Python.exe to PATH."** box when installing (if you installed it without checking this box, either look on the internet how to add it to windows PATH manually, or reinstall it)
-2. Then, install `ass` python module (only required to merge subtitles at the end) with this command through Windows cmd.exe or Powershell - not inside Python shell:
-### `pip install ass`
+2. Then, install `ass` python module (only required to merge subtitles at the end) with this command through Windows cmd.exe or Powershell - not inside Python shell: **`pip install ass`**
 
 ## How to use it?
 
