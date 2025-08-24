@@ -31,6 +31,7 @@ def process_kdenlive_file(file_path):
 
     video_synced_sources = {}
 
+    # Détecter les pistes audio "video synced"
     for chain in root.findall(".//chain"):
         resource_elem = chain.find(".//property[@name='resource']")
         if resource_elem is not None and "video synced" in resource_elem.text.lower():
@@ -49,6 +50,7 @@ def process_kdenlive_file(file_path):
 
     grouped_results = {source: [] for source in video_synced_sources.values()}
 
+    # Parcourir les playlists
     for playlist in root.findall(".//playlist"):
         if playlist.get("id") == "main_bin":
             continue
@@ -79,6 +81,7 @@ def process_kdenlive_file(file_path):
                 timeline_start = timeline_position + offset
                 timeline_end = timeline_start + clip_duration
 
+                # Vérifie si le clip contient l'effet asubcut
                 has_asubcut = (
                     producer in video_synced_sources and
                     any(
@@ -88,13 +91,22 @@ def process_kdenlive_file(file_path):
                     )
                 )
 
+                # Vérifie si le clip contient l'effet asubboost
+                has_asubboost = any(
+                    filt.find("./property[@name='mlt_service']") is not None and
+                    filt.find("./property[@name='mlt_service']").text == "avfilter.asubboost"
+                    for filt in element.findall("filter")
+                )
+
+                # Ajouter le clip uniquement s'il n'a pas asubcut
                 if not has_asubcut and producer in video_synced_sources:
                     audio_source = video_synced_sources[producer]
                     grouped_results[audio_source].append({
                         'timeline_start': timeline_start,
                         'timeline_end': timeline_end,
                         'source_in': clip_in,
-                        'source_out': clip_out
+                        'source_out': clip_out,
+                        'forced_sync': 'Yes' if has_asubboost else ''
                     })
 
                 timeline_position += clip_duration
@@ -114,11 +126,12 @@ def main():
                     continue
 
                 sorted_clips = sorted(clips, key=lambda clip: clip['timeline_start'])
-                output_lines = [f"{'Timeline Start':<16} {'Timeline End':<16} {'Source Start':<16} {'Source End':<16}"]
+                output_lines = [f"{'Timeline Start':<16} {'Timeline End':<16} {'Source Start':<16} {'Source End':<16} {'Forced sync':<10}"]
 
                 for clip in sorted_clips:
                     line = f"{seconds_to_timecode(clip['timeline_start']):<16} {seconds_to_timecode(clip['timeline_end']):<16} " \
-                           f"{seconds_to_timecode(clip['source_in']):<16} {seconds_to_timecode(clip['source_out']):<16}"
+                           f"{seconds_to_timecode(clip['source_in']):<16} {seconds_to_timecode(clip['source_out']):<16} " \
+                           f"{clip.get('forced_sync', ''):<10}"
                     output_lines.append(line)
 
                 output_file = os.path.join(output_subfolder, f"{audio_source}.txt")
