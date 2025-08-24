@@ -47,6 +47,13 @@ Kdenlive does not store timeline clips timecodes in it"s project files, so I had
 
 - If a clip is disabled in kdenlive, subtitles of this clip - if it contains a voice - will still be generated. We've actually used this techique to generate subtitles lines for AI isolated vocals, that we aligned with a disabled audio clip containing the same voice so that it syncs the associated subtitle line.
 
+
+- Compatibility of the script with other projects
+
+These scripts are not made specifically for Dragon Ball Z serie. Actually, they can be compatible with any project made with kdenlive, but you will have to edit scripts so that they don't look for audio files named "video synced" (unless you rename your audio track like that) and change output filenames in the merging script at the end.
+
+#### Asubcut feature
+
 - I coded something in the script to prevent it from generating subtitle lines that aren’t used in the project (the issue I mentioned earlier).
 First, you need to understand how it happens. Imagine a timeline with video and audio clips. It's cut at multiple edit points, creating many smaller clips. The issue is that sometimes, a subtitle line starts near the end of an audio clip—because just after that clip (i.e., if it hadn't been cut), there's a voice.
 But since the subtitle line’s start time is often set before the voice actually plays, the line may end up being included in the audio clip we use.
@@ -55,8 +62,5 @@ What we should do is: split the audio track at the end, add the “Asubcut” ef
 
 <img width="855" height="488" alt="2025-08-02_23_37_11-046____708x480_23 98fps_-_Kdenlive" src="https://github.com/user-attachments/assets/55528b94-1068-458a-b803-03838c50ce53" />
 
+#### Asubboost feature
 - Also, I added another feature that allows you to generate subtitles for duplicated voice clips in the timeline. By default, the script doesn't duplicate subtitles lines if clips are duplicated (for safety reason, it could generate unwanted lines). But if you want to force syncing a particular line (let's say you create some kind of flashback and re-use a voice clip from somewhere else), just add “Asubboost” effect to that clip and the script will generate it.
-
-- Compatibility of the script with other projects
-
-These scripts are not made specifically for Dragon Ball Z serie. Actually, they can be compatible with any project made with kdenlive, but you will have to edit scripts so that they don't look for audio files named "video synced" (unless you rename your audio track like that) and change output filenames in the merging script at the end.
