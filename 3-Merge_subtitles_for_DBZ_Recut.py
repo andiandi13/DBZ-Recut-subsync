@@ -1,9 +1,10 @@
 import os
 import subprocess
+import re
 
 # Dossiers
 input_directory = 'synced'
-output_directory = 'subtitles for Jartcut'
+output_directory = 'subtitles for DBZ Recut'
 
 # Création du dossier de sortie s'il n'existe pas
 if not os.path.exists(output_directory):
@@ -12,6 +13,41 @@ if not os.path.exists(output_directory):
 # Fonction pour sécuriser les chemins avec des espaces
 def quote(path):
     return f'"{path}"' if ' ' in path else path
+
+# Fonction pour nettoyer les styles en double dans un fichier .ass
+def deduplicate_styles(file_path):
+    with open(file_path, "r", encoding="utf-8-sig") as f:
+        lines = f.readlines()
+
+    in_styles = False
+    seen = set()
+    cleaned_lines = []
+
+    for line in lines:
+        if line.strip().startswith("[V4+ Styles]"):
+            in_styles = True
+            cleaned_lines.append(line)
+            continue
+
+        if in_styles:
+            if line.strip().startswith("Format:"):
+                cleaned_lines.append(line)
+                continue
+            if line.strip().startswith("Style:"):
+                if line not in seen:
+                    seen.add(line)
+                    cleaned_lines.append(line)
+                # sinon → doublon, on ignore
+                continue
+            if line.strip().startswith("["):  # nouvelle section
+                in_styles = False
+                cleaned_lines.append(line)
+                continue
+
+        cleaned_lines.append(line)
+
+    with open(file_path, "w", encoding="utf-8-sig") as f:
+        f.writelines(cleaned_lines)
 
 # Fonction pour fusionner les fichiers avec subdigest
 def merge_files(merge_target, files_to_merge):
@@ -27,6 +63,7 @@ def merge_files(merge_target, files_to_merge):
 
     try:
         subprocess.run(command, shell=True, check=True)
+        deduplicate_styles(output_path)  # 🔹 nettoyage des doublons
         print(f"Fusion réussie pour {output_path}")
     except subprocess.CalledProcessError:
         print(f"Erreur lors de la fusion de {output_path}")
