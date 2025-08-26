@@ -1,8 +1,8 @@
-![Jartcut](https://github.com/user-attachments/assets/d9373bea-ff08-474c-a395-3f3a450cdcd5)
+![Recut](https://github.com/user-attachments/assets/95e6af73-94cf-4ed6-8f97-e46f911f9538)
 
 ## What is it ?
 
-These scripts allow synchronizing `.ass` subtitles synced to Dragon Box (or other editions with similar synchronization) to the Jartcut edition of DBZ, which is an abridged version available here: [https://nyaa.si/view/1936292](https://nyaa.si/view/1936292).
+These scripts allow synchronizing `.ass` subtitles synced to Dragon Box (or other editions with similar synchronization) to the Recut edition of DBZ, which is an abridged version available here: [https://nyaa.si/view/1936292](https://nyaa.si/view/1936292).
 
 Note that it only works with  `.ass` file format.
 
@@ -24,7 +24,7 @@ Note that it only works with  `.ass` file format.
      `DBZ 185 - Fuji - R2J DVD video synced - Team Mirolo.txt` and `DBZ185DVD.ass` would match.
 Avoid filenames containing numbers other than the episode numbers to prevent issues from occurring.
 
-5. **Finally, run the script** `3-Merge_subtitles_for_Jartcut.py`, which uses `subdigest.py` to merge the subtitles from the `synced` folder into subtitles matching the episodes DBZ Recut edition. A folder named `subtitles for Jartcut` will be created, containing the final subtitles.
+5. **Finally, run the script** `3-Merge_subtitles_for_DBZ_Recut.py`, which uses `subdigest.py` to merge the subtitles from the `synced` folder into subtitles matching the episodes DBZ Recut edition. A folder named `subtitles for DBZ Recut` will be created, containing the final subtitles.
 
 ## Important Notes ⚠
 
