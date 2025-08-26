@@ -1,5 +1,4 @@
-![Recut](https://github.com/user-attachments/assets/ce52561c-b7ba-4ddd-ab2f-24af8581497d)
-
+![Recut](https://github.com/user-attachments/assets/fa3aff10-1811-4a2b-a612-97766c3fa509)
 
 
 
