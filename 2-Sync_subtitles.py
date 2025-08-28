@@ -182,7 +182,6 @@ def main():
                               and re.search(r'(\d+)', os.path.basename(f)).group(1) == txt_number]
 
         if matching_ass_files:
-            print(f"Traitement : {txt_file} -> {len(matching_ass_files)} fichier(s) .ass")
             timecodes = read_timecodes_from_txt(txt_file)
             for ass_file in matching_ass_files:
                 relative_dir = os.path.relpath(os.path.dirname(ass_file), 'subtitles')
