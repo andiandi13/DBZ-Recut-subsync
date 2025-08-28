@@ -49,7 +49,7 @@ def deduplicate_styles(file_path):
     with open(file_path, "w", encoding="utf-8-sig") as f:
         f.writelines(cleaned_lines)
 
-# Fonction pour fusionner les fichiers avec subdigest
+# Fonction pour fusionner et trier les fichiers avec subdigest
 def merge_files(merge_target, files_to_merge):
     output_path = os.path.join(output_directory, merge_target)
     if not files_to_merge:
@@ -59,14 +59,16 @@ def merge_files(merge_target, files_to_merge):
     command = f'python subdigest.py -i {quote(files_to_merge[0])}'
     for file in files_to_merge[1:]:
         command += f' --merge-file {quote(file)}'
-    command += f' --remove-unused-styles -o {quote(output_path)}'
+
+    # 🔹 Ajout du tri automatique après fusion
+    command += f' --remove-unused-styles --selection-set-expr "True" --sort-field start ASC -o {quote(output_path)}'
 
     try:
         subprocess.run(command, shell=True, check=True)
         deduplicate_styles(output_path)  # 🔹 nettoyage des doublons
-        print(f"Fusion réussie pour {output_path}")
+        print(f"Merge successful for {os.path.basename(output_path)}")
     except subprocess.CalledProcessError:
-        print(f"Erreur lors de la fusion de {output_path}")
+        print(f"Error while merging {output_path}")
 
 # Fonction principale
 def main():
@@ -83,7 +85,6 @@ def main():
             # Nom du fichier de sortie = nom du dossier courant + ".ass"
             output_filename = os.path.basename(root) + '.ass'
 
-            print(f"Fusion avec subdigest pour le dossier '{rel_path}'")
             merge_files(os.path.join(rel_path, output_filename), ass_files)
 
 if __name__ == '__main__':
