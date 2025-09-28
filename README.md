@@ -6,7 +6,7 @@
 
 ## What is it ?
 
-These scripts allow synchronizing `.ass` subtitles synced to Dragon Box (or other editions with similar synchronization) to the Recut edition of DBZ, which is an abridged version available here: [https://nyaa.si/view/1936292](https://nyaa.si/view/1936292).
+These scripts allow synchronizing `.ass` subtitles synced to Dragon Box (or other editions with similar synchronization) to the Recut edition of DBZ, which is an abridged version available [here](https://nyaa.si/view/2024827).
 
 Note that it only works with  `.ass` file format.
 
