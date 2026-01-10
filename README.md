@@ -6,7 +6,7 @@
 
 ## What is it ?
 
-These scripts allow synchronizing `.ass` subtitles synced to Dragon Box (or other editions with similar synchronization) to the Recut edition of DBZ, which is an abridged version available [here](https://nyaa.si/view/2024827).
+This script allow synchronizing `.ass` subtitles synced to Dragon Box (or other editions with similar synchronization) to the Recut edition of DBZ, which is an abridged version available [here](https://nyaa.si/view/2024827).
 
 Note that it only works with  `.ass` file format.
 
@@ -50,7 +50,7 @@ This is a way I found to ensure the script calculates timecodes only for broadca
 - If a clip is disabled in kdenlive, subtitles of this clip - if it contains a voice - will still be generated. We've actually used this techique to generate subtitles lines for isolated vocals, that we aligned with a disabled audio clip containing the same voice so that it syncs the associated subtitle line.
 
 
-- Compatibility of the script with other projects : this script are not made specifically for Dragon Ball Z serie. Actually, they can be compatible with any project made with kdenlive, but you will have to edit scripts so that they don't look for audio files named "video synced" (unless you rename your audio track like that) and change output filenames in the merging script at the end.
+- Compatibility of the script with other projects : this script are not made specifically for Dragon Ball Z serie. Actually, it can be compatible with any project made with kdenlive, but you will have to edit the script "Extract_timecodes.py" located in _dependencies folder, so that it doesn't look for audio files named "video synced" (unless you rename your audio track like that) and change output filenames in the merging script at the end.
 
 #### Asubcut feature
 
