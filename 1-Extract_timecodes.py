@@ -3,7 +3,7 @@ import glob
 import xml.etree.ElementTree as ET
 from datetime import timedelta
 
-# Dossier contenant les fichiers .kdenlive
+# Dossier contenant les fichiers .kdenlive / .xml
 KDENLIVE_FOLDER = os.path.join(os.getcwd(), 'kdenlive')
 # Dossier de sortie des fichiers txt
 TIMECODES_FOLDER = os.path.join(os.getcwd(), 'timecodes')
@@ -115,7 +115,12 @@ def process_kdenlive_file(file_path):
 
 def main():
     if os.path.isdir(KDENLIVE_FOLDER):
-        for file_path in glob.glob(os.path.join(KDENLIVE_FOLDER, "*.kdenlive")):
+        files = (
+            glob.glob(os.path.join(KDENLIVE_FOLDER, "*.kdenlive")) +
+            glob.glob(os.path.join(KDENLIVE_FOLDER, "*.xml"))
+        )
+
+        for file_path in files:
             kdenlive_name = os.path.splitext(os.path.basename(file_path))[0]
             output_subfolder = os.path.join(TIMECODES_FOLDER, kdenlive_name)
             os.makedirs(output_subfolder, exist_ok=True)
@@ -126,12 +131,19 @@ def main():
                     continue
 
                 sorted_clips = sorted(clips, key=lambda clip: clip['timeline_start'])
-                output_lines = [f"{'Timeline Start':<16} {'Timeline End':<16} {'Source Start':<16} {'Source End':<16} {'Forced sync':<10}"]
+                output_lines = [
+                    f"{'Timeline Start':<16} {'Timeline End':<16} "
+                    f"{'Source Start':<16} {'Source End':<16} {'Forced sync':<10}"
+                ]
 
                 for clip in sorted_clips:
-                    line = f"{seconds_to_timecode(clip['timeline_start']):<16} {seconds_to_timecode(clip['timeline_end']):<16} " \
-                           f"{seconds_to_timecode(clip['source_in']):<16} {seconds_to_timecode(clip['source_out']):<16} " \
-                           f"{clip.get('forced_sync', ''):<10}"
+                    line = (
+                        f"{seconds_to_timecode(clip['timeline_start']):<16} "
+                        f"{seconds_to_timecode(clip['timeline_end']):<16} "
+                        f"{seconds_to_timecode(clip['source_in']):<16} "
+                        f"{seconds_to_timecode(clip['source_out']):<16} "
+                        f"{clip.get('forced_sync', ''):<10}"
+                    )
                     output_lines.append(line)
 
                 output_file = os.path.join(output_subfolder, f"{audio_source}.txt")
