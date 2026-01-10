@@ -22,12 +22,16 @@ Note that it only works with  `.ass` file format.
 2. **Place all your .ass subtitle files** that you want to sync in the `subtitles` folder. The script supports batch processing — you can add individual .ass files directly in the root of the folder, as well as multiple subfolders containing .ass files (for example, if you want to sync subtitles in different languages).
 
 3.  **Run the script** `Resync subtitles.py`— this will create multiple folders, namely `timecodes`, `synced` and `subtitles for DBZ Recut`. Only the latter matters, this is where you will find your resynced subtitles when the at the end of the process.
+
+That's it.
    
    - **Important:** For this script to work, the ass subtitles located in the `subtitles` folder and the `.txt` files in the `timecodes` folder must share the same numbering format (nn or nnn). Since the timecodes fles are automatically named after the broadcast audio tracks, you just have to make sure that your subtitle files are named correctly, for example :
      `DBZ 185 - Fuji - R2J DVD video synced - Team Mirolo.txt` and `DBZ185DVD.ass` would match.
 Avoid filenames containing numbers other than the episode numbers to prevent issues from occurring.
 
-## Important Notes ⚠
+<details>
+
+<summary>Important Notes</summary>
 
 - The script automatically removes unused lines from the raw subtitles. However, since it's hard to code accurate rules to delete all useless lines without risking the removal of lines that should be kept, there’s a possibility you’ll find an extra unused line here and there. We edited the timeline of all project files to prevent this as much as possible, but it’s good to know just in case you come across it.
 
@@ -35,7 +39,12 @@ Avoid filenames containing numbers other than the episode numbers to prevent iss
 
 - Another thing to know is that some lines can overlap each other. It's mostly due to the audio edits mentioned previously, so it will affect very few subtitle lines. You just have to retime those lines so that they don't overlap (you can do it in softwares like Aegisub or SubtitleEdit, or even with any text editor)
 
-## Technical Details
+</details>
+
+<details>
+
+<summary>Technical Details</summary>
+
 - For the script to function properly, the **audio tracks in the project must contain the phrase** `"video synced"` in their name (this is found in the `<property name="resource">` section of the `.kdenlive` file).
 This is a way I found to ensure the script calculates timecodes only for broadcast audio tracks (which have names ending by "video synced") while ignoring extra timeline clips (which are unnecessary for subtitle resynchronization and may disrupt proper synchronization).
 
@@ -64,3 +73,5 @@ What we should do is: split the audio track at the end, add the “Asubcut” ef
 
 #### Asubboost feature
 - Also, I added another feature that allows you to generate subtitles for duplicated voice clips in the timeline. By default, the script doesn't duplicate subtitles lines if clips are duplicated (for safety reason, it could generate unwanted lines). But if you want to force syncing a particular line (let's say you create some kind of flashback and re-use a voice clip from somewhere else), just add “Asubboost” effect to that clip and the script will generate it.
+
+</details>
