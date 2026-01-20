@@ -15,7 +15,7 @@ TIMECODES_FOLDER = os.path.join(PARENT_FOLDER, 'timecodes')
 if not os.path.exists(TIMECODES_FOLDER):
     os.makedirs(TIMECODES_FOLDER)
 
-FRAME_OFFSET = 0.042  # 42 ms en secondes
+FRAME_OFFSET = 1001 / 24000
 
 def timecode_to_seconds(timecode):
     hh, mm, ss_ms = timecode.split(':')
@@ -153,3 +153,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
