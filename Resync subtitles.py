@@ -5,6 +5,10 @@ from datetime import datetime
 # Folder containing the dependency scripts
 DEPENDENCY_FOLDER = os.path.join(os.getcwd(), "_dependencies")
 
+# Logs folder inside _dependencies (created automatically if missing)
+LOGS_FOLDER = os.path.join(DEPENDENCY_FOLDER, "logs")
+os.makedirs(LOGS_FOLDER, exist_ok=True)
+
 # Scripts to run in order
 scripts = [
     "Extract_timecodes.py",
@@ -15,7 +19,7 @@ scripts = [
 # Create a timestamp for the log file: YYYY-MM-DD-HH-MM-SS.ms
 # Replacing : by - for Windows compatibility
 timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S.%f")[:-3]
-log_file_path = os.path.join(DEPENDENCY_FOLDER, f"log-{timestamp}.txt")
+log_file_path = os.path.join(LOGS_FOLDER, f"log-{timestamp}.txt")
 
 def timestamped_line(line):
     """Prefix a log line with current time [HH:MM:SS]"""
@@ -52,7 +56,7 @@ def main():
     start_time = datetime.now()
     print(timestamped_line(f"Execution log will be saved to: {log_file_path}"), end="")
     with open(log_file_path, "a", encoding="utf-8") as log_file:
-        log_file.write(timestamped_line(f"Execution started\n"))
+        log_file.write(timestamped_line("Execution started\n"))
 
     for script in scripts:
         success = run_script(script)
