@@ -40,15 +40,30 @@ def read_timecodes_from_txt(txt_filepath):
     return timecodes
 
 def time_to_ms(time_str):
+    time_str = time_str.strip()
+    is_negative = False
+    
+    # Gère le cas où le timecode est négatif
+    if time_str.startswith('-'):
+        is_negative = True
+        time_str = time_str[1:]  # On enlève le signe '-' pour le parsing
+        
     time_obj = datetime.strptime(time_str, "%H:%M:%S.%f")
-    return int(time_obj.hour * 3600000 + time_obj.minute * 60000 +
-               time_obj.second * 1000 + time_obj.microsecond // 1000)
+    ms = int(time_obj.hour * 3600000 + time_obj.minute * 60000 +
+             time_obj.second * 1000 + time_obj.microsecond // 1000)
+    
+    return -ms if is_negative else ms
 
 def ms_to_time(ms):
+    # Si le temps est négatif, on garde le signe en mémoire et on travaille en positif
+    is_negative = ms < 0
+    ms = abs(ms)
+    
     hours = ms // 3600000
     minutes = (ms % 3600000) // 60000
     seconds = (ms % 60000) // 1000
     milliseconds = round((ms % 1000) / 10)
+    
     if milliseconds == 100:
         milliseconds = 0
         seconds += 1
@@ -58,7 +73,9 @@ def ms_to_time(ms):
             if minutes == 60:
                 minutes = 0
                 hours += 1
-    return f"{hours}:{minutes:02}:{seconds:02}.{milliseconds:02}"
+                
+    prefix = "-" if is_negative else ""
+    return f"{prefix}{hours}:{minutes:02}:{seconds:02}.{milliseconds:02}"
 
 def update_ass_timecodes(ass_filepath, timecodes, output_subfolder):
     with open(ass_filepath, 'r', encoding='utf-8') as file:
