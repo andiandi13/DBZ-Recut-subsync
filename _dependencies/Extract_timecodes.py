@@ -176,21 +176,23 @@ def process_kdenlive_file(file_path):
                 timeline_start = sequence_timeline_offset + timeline_position + FRAME_OFFSET * clip_count
                 timeline_end = timeline_start + clip_duration
 
+                clip_filter_names = {
+                    f.text
+                    for filt in element.findall("filter")
+                    if (f := filt.find("./property[@name='mlt_service']")) is not None
+                }
+                
+                EXCLUDE_FILTERS = {"avfilter.asubcut", "frei0r.nosync0r"}
+                FORCED_SYNC_FILTERS = {"avfilter.asubboost", "avfilter.fsync"}
+                
                 has_asubcut = (
                     producer in video_synced_sources and
-                    any(
-                        filt.find("./property[@name='mlt_service']") is not None and
-                        filt.find("./property[@name='mlt_service']").text == "avfilter.asubcut"
-                        for filt in element.findall("filter")
-                    )
+                    bool(clip_filter_names & EXCLUDE_FILTERS)
                 )
-
-                has_asubboost = any(
-                    filt.find("./property[@name='mlt_service']") is not None and
-                    filt.find("./property[@name='mlt_service']").text == "avfilter.asubboost"
-                    for filt in element.findall("filter")
-                )
-
+                
+                has_asubboost = bool(clip_filter_names & FORCED_SYNC_FILTERS)
+                
+                
                 if not has_asubcut and producer in video_synced_sources:
                     audio_source = video_synced_sources[producer]
                     grouped_results[audio_source].append({
