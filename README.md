@@ -61,17 +61,18 @@ This is a way I found to ensure the script calculates timecodes only for broadca
 
 - Compatibility of the script with other projects : this script are not made specifically for Dragon Ball Z serie. Actually, it can be compatible with any project made with kdenlive, but you will have to edit the script "Extract_timecodes.py" located in _dependencies folder, so that it doesn't look for audio files named "video synced" (unless you rename your audio track like that) and change output filenames in the merging script at the end.
 
-#### Asubcut feature
+#### Subtitle exclusion : Asubcut (audio) / nosync0r (video)
 
-- I coded something in the script to prevent it from generating subtitle lines that aren’t used in the project (the issue I mentioned earlier).
-First, you need to understand how it happens. Imagine a timeline with video and audio clips. It's cut at multiple edit points, creating many smaller clips. The issue is that sometimes, a subtitle line starts near the end of an audio clip—because just after that clip (i.e., if it hadn't been cut), there's a voice.
-But since the subtitle line’s start time is often set before the voice actually plays, the line may end up being included in the audio clip we use.
-So, the feature I added to the script is: if an audio clip has an effect named “Asubcut” (which is a native Kdenlive audio effect—I chose it solely because it’s a mnemonic: "A sub(title) cut"), then any subtitle lines included in that audio clip will be discarded by the script.
-What we should do is: split the audio track at the end, add the “Asubcut” effect to the final clip, and disable the effect (since we don’t actually use it—it just acts as a cue for the script). Then, save the Kdenlive project and run the script on it. That's what we did for the project files of DBZ Recut so that you can synchronize your own subtitles without extra unused lines.
+Sometimes, a subtitle line starts near the end of an audio clip — because just after that clip (i.e., if it hadn't been cut), there's a voice. Since the subtitle line's start time is often set before the voice actually plays, the line may end up being incorrectly included in the preceding clip.
+To prevent this, split the track at the right point, add the Asubcut effect (on audio clips) or nosync0r (on video clips) to the final clip, and disable the effect (since it's not actually used for audio processing — it just acts as a cue for the script). Any subtitle lines included in that marked clip will then be discarded.
 
-<img width="855" height="488" alt="2025-08-02_23_37_11-046____708x480_23 98fps_-_Kdenlive" src="https://github.com/user-attachments/assets/55528b94-1068-458a-b803-03838c50ce53" />
+"Asubcut" was chosen as a mnemonic: A sub(title) cut.
 
-#### Asubboost feature
-- Also, I added another feature that allows you to generate subtitles for duplicated voice clips in the timeline. By default, the script doesn't duplicate subtitles lines if clips are duplicated (for safety reason, it could generate unwanted lines). But if you want to force syncing a particular line (let's say you create some kind of flashback and re-use a voice clip from somewhere else), just add “Asubboost” effect to that clip and the script will generate it.
+<img width="855" height="488" alt="..." src="https://github.com/user-attachments/assets/55528b94-1068-458a-b803-03838c50ce53" />
+
+#### Force subtitle duplication : Asubboost (audio) / Fsync (video)
+
+By default, the script won't generate subtitle lines for duplicated clips (as a safety measure against unwanted duplicates). If you intentionally reuse a voice clip — for instance in a flashback — add the Asubboost effect (on audio clips) or Fsync (on video clips) to that clip to force subtitle generation for it.
+
 
 </details>
