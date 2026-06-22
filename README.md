@@ -19,7 +19,7 @@ Note that it only works with  `.ass` file format.
 
 1. **Place the Kdenlive project files** (`.kdenlive` extension) in the **kdenlive** folder.
 
-2. **Place all your .ass subtitle files** that you want to sync in the `subtitles` folder. The script supports batch processing — you can add individual .ass files directly in the root of the folder, as well as multiple subfolders containing .ass files (for example, if you want to sync subtitles in different languages).
+2. **Place all your .ass subtitle files** that you want to sync in the `subtitles` folder. The script supports batch processing, you can add individual .ass files directly in the root of the folder, as well as multiple subfolders containing .ass files (for example, if you want to sync subtitles in different languages).
 
 3.  **Run the script** `Resync subtitles.py`— this will create multiple folders, namely `timecodes`, `synced` and `subtitles for DBZ Recut`. Only the latter matters, this is where you will find your resynced subtitles when the at the end of the process.
 
@@ -63,8 +63,8 @@ This is a way I found to ensure the script calculates timecodes only for broadca
 
 #### Subtitle exclusion : Asubcut (audio) / nosync0r (video)
 
-Sometimes, a subtitle line starts near the end of an audio clip — because just after that clip (i.e., if it hadn't been cut), there's a voice. Since the subtitle line's start time is often set before the voice actually plays, the line may end up being incorrectly included in the preceding clip.
-To prevent this, split the track at the right point, add the Asubcut effect (on audio clips) or nosync0r (on video clips) to the final clip, and disable the effect (since it's not actually used for audio processing — it just acts as a cue for the script). Any subtitle lines included in that marked clip will then be discarded.
+Sometimes, a subtitle line starts near the end of an audio clip, because just after that clip (i.e., if it hadn't been cut), there's a voice. Since the subtitle line's start time is often set before the voice actually plays, the line may end up being incorrectly included in the preceding clip.
+To prevent this, split the track at the right point, add the Asubcut effect (on audio clips) or nosync0r (on video clips) to the final clip, and disable the effect (since it's not actually used for audio processing, it just acts as a cue for the script). Any subtitle lines included in that marked clip will then be discarded.
 
 "Asubcut" was chosen as a mnemonic: A sub(title) cut.
 
@@ -72,7 +72,7 @@ To prevent this, split the track at the right point, add the Asubcut effect (on 
 
 #### Force subtitle duplication : Asubboost (audio) / Fsync (video)
 
-By default, the script won't generate subtitle lines for duplicated clips (as a safety measure against unwanted duplicates). If you intentionally reuse a voice clip — for instance in a flashback — add the Asubboost effect (on audio clips) or Fsync (on video clips) to that clip to force subtitle generation for it.
+By default, the script won't generate subtitle lines for duplicated clips (as a safety measure against unwanted duplicates). If you intentionally reuse a voice clip, for instance in a flashback, add the Asubboost effect (on audio clips) or Fsync (on video clips) to that clip to force subtitle generation for it.
 
 
 </details>
