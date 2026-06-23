@@ -33,7 +33,7 @@ Avoid filenames containing numbers other than the episode numbers to prevent iss
 
 <summary>Important Notes</summary>
 
-- The script automatically removes unused lines from the raw subtitles. However, since it's hard to code accurate rules to delete all useless lines without risking the removal of lines that should be kept, there’s a possibility you’ll find an extra unused line here and there. We edited the timeline of all project files to prevent this as much as possible, but it’s good to know just in case you come across it.
+- The script automatically removes unused lines from the raw subtitles. However, since there can't be a perfect rule to delete all useless lines without risking the removal of lines that should be kept, there’s a possibility you’ll find an extra unused line here and there. We edited the timeline of all project files to prevent this as much as possible, but it’s good to know just in case you come across it.
 
 - Also, not directly related to the script but there are some lines that you have to manually edit, because we edited the voice clip to remove a part of it, therefore the subtitle must be adapted accordingly. You can find all lines to edit [here](https://docs.google.com/spreadsheets/d/1pw--Lhc-u3Rt4GSl_2UvieFWkNJ26srMeyL7d5OQ_XM/edit?gid=1686722232#gid=1686722232)
 
@@ -45,10 +45,13 @@ Avoid filenames containing numbers other than the episode numbers to prevent iss
 
 <summary>Technical Details</summary>
 
-- For the script to function properly, the **audio tracks in the project must contain the phrase** `"video synced"` in their name (this is found in the `<property name="resource">` section of the `.kdenlive` file).
-This is a way I found to ensure the script calculates timecodes only for broadcast audio tracks (which have names ending by "video synced") while ignoring extra timeline clips (which are unnecessary for subtitle resynchronization and may disrupt proper synchronization).
+#### How does the script work?
 
-- Kdenlive does not store timeline clips timecodes in it"s project files, so I had to recalculate them using the available project data:  
+The script analyzes the project files and looks for all tracks containing the words "video synced" in their filenames (this is found in the `<property name="resource">` section of the `.kdenlive` file)
+This is a way I found to ensure that the script calculates timecodes only for broadcast audio tracks (which have names ending by "video synced") while ignoring other timeline clips (which are unnecessary for subtitle resynchronization and may disrupt proper synchronization).
+
+Once those clips are identified, the script will calculate the difference between their original timestamps, and their timestamps on the Kdenlive timeline, in order to shift each and every subtitle line according to it's time difference.
+However, since Kdenlive does not store timeline clips timecodes in it's project files, I had to recalculate them using the available project data:  
   - The **duration** of each track
   - Their **associated playlist (Track)**
   - The **duration of empty spaces (blank length)** between clips
@@ -56,7 +59,11 @@ This is a way I found to ensure the script calculates timecodes only for broadca
   **Workaround:** To compensate, each clip's placement timecode is shifted +42ms per clip position (e.g., +42ms at position 1, +84ms at position 2, etc.).
   This adjustment results in **pretty accurate** timecodes. Some subtitles may still be off by **one or two video frames**, but overall synchronization remains good. If frame-perfect synchronization isn't required, the result is excellent. 
 
-- If a clip is disabled in kdenlive, subtitles of this clip - if it contains a voice - will still be generated. We've actually used this techique to generate subtitles lines for isolated vocals, that we aligned with a disabled audio clip containing the same voice so that it syncs the associated subtitle line.
+#### What if a timeline clip is disabled?
+
+If a clip is disabled in kdenlive, subtitles of this clip will still be generated. We've actually used this technique to generate subtitles lines for isolated vocals (a random .wav file which have not "video synced" in it's name), that we aligned it with a disabled audio clip containing the same voice so that it syncs the associated subtitle line :
+
+<img width="500" height="474" alt="DBZR026" src="https://github.com/user-attachments/assets/c64ec0c0-33de-488f-a35f-7075928355d5" />
 
 
 - Compatibility of the script with other projects : this script are not made specifically for Dragon Ball Z serie. Actually, it can be compatible with any project made with kdenlive, but you will have to edit the script "Extract_timecodes.py" located in _dependencies folder, so that it doesn't look for audio files named "video synced" (unless you rename your audio track like that) and change output filenames in the merging script at the end.
