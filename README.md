@@ -21,7 +21,7 @@ Note that it only works with  `.ass` file format.
 
 2. **Place all your .ass subtitle files** that you want to sync in the `subtitles` folder. The script supports batch processing, you can add individual .ass files directly in the root of the folder, as well as multiple subfolders containing .ass files (for example, if you want to sync subtitles in different languages).
 
-3.  **Run the script** `Resync subtitles.py`— this will create multiple folders, namely `timecodes`, `synced` and `subtitles for DBZ Recut`. Only the latter matters, this is where you will find your resynced subtitles when the at the end of the process.
+3.  **Run the script** `Resync subtitles.py`, this will create multiple folders, namely `timecodes`, `synced` and `subtitles for DBZ Recut`. Only the latter matters, this is where you will find your resynced subtitles when the at the end of the process.
 
 That's it.
    
