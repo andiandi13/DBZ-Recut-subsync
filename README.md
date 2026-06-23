@@ -42,16 +42,15 @@ Avoid filenames containing numbers other than the episode numbers to prevent iss
 </details>
 
 <details>
-
 <summary>Technical Details</summary>
 
 #### How does the script work?
 
 The script analyzes the project files and looks for all tracks containing the words "video synced" in their filenames (this is found in the `<property name="resource">` section of the `.kdenlive` file)
-This is a way I found to ensure that the script calculates timecodes only for broadcast audio tracks (which have names ending by "video synced") while ignoring other timeline clips (which are unnecessary for subtitle resynchronization and may disrupt proper synchronization).
+This is a way I found to ensure that the script calculates timecodes only for broadcast audio tracks (which have names ending in "video synced") while ignoring other timeline clips (which are unnecessary for subtitle resynchronization and may disrupt proper synchronization).
 
-Once those clips are identified, the script will calculate the difference between their original timestamps, and their timestamps on the Kdenlive timeline, in order to shift each and every subtitle line according to it's time difference.
-However, since Kdenlive does not store timeline clips timecodes in it's project files, I had to recalculate them using the available project data:  
+Once those clips are identified, the script will calculate the difference between their original timestamps, and their timestamps on the Kdenlive timeline, in order to shift each and every subtitle line according to its time difference.
+However, since Kdenlive does not store timeline clips timecodes in its project files, I had to recalculate them using the available project data:  
   - The **duration** of each track
   - Their **associated playlist (Track)**
   - The **duration of empty spaces (blank length)** between clips
@@ -61,19 +60,16 @@ However, since Kdenlive does not store timeline clips timecodes in it's project 
 
 #### What if a timeline clip is disabled?
 
-If a clip is disabled in kdenlive, subtitles of this clip will still be generated. We've actually used this technique to generate subtitles lines for isolated vocals (a random .wav file which have not "video synced" in it's name), that we aligned it with a disabled audio clip containing the same voice so that it syncs the associated subtitle line :
+If a clip is disabled in kdenlive, subtitles for this clip will still be generated. We've actually used this technique to generate subtitle lines for isolated vocals (a random .wav file which does not have "video synced" in its name), that we aligned with a disabled audio clip containing the same voice so that it syncs the associated subtitle line :
 
 <img width="500" height="474" alt="DBZR026" src="https://github.com/user-attachments/assets/c64ec0c0-33de-488f-a35f-7075928355d5" />
-
-
-- Compatibility of the script with other projects : this script are not made specifically for Dragon Ball Z serie. Actually, it can be compatible with any project made with kdenlive, but you will have to edit the script "Extract_timecodes.py" located in _dependencies folder, so that it doesn't look for audio files named "video synced" (unless you rename your audio track like that) and change output filenames in the merging script at the end.
 
 #### Subtitle exclusion : Asubcut (audio) / nosync0r (video)
 
 Sometimes, a subtitle line starts near the end of an audio clip, because just after that clip (i.e., if it hadn't been cut), there's a voice. Since the subtitle line's start time is often set before the voice actually plays, the line may end up being incorrectly included in the preceding clip.
-To prevent this, split the track at the right point, add the Asubcut effect (on audio clips) or nosync0r (on video clips) to the final clip, and disable the effect (since it's not actually used for audio processing, it just acts as a cue for the script). Any subtitle lines included in that marked clip will then be discarded.
+To prevent this, split the clip just before the point where that unwanted line would be generated, then add the Asubcut effect (on audio clips) or nosync0r (on video clips) to the final clip, and disable the effect (since it's not actually used for its intended purpose, but just acts as a cue for the script). Any subtitle lines included in that marked clip will then be discarded.
 
-"Asubcut" was chosen as a mnemonic: A sub(title) cut.
+"Asubcut" and "nosync0r" were just chosen as mnemonics: "A subtitle cut" and "No synchronization"
 
 <img width="855" height="488" alt="..." src="https://github.com/user-attachments/assets/55528b94-1068-458a-b803-03838c50ce53" />
 
@@ -81,5 +77,12 @@ To prevent this, split the track at the right point, add the Asubcut effect (on 
 
 By default, the script won't generate subtitle lines for duplicated clips (as a safety measure against unwanted duplicates). If you intentionally reuse a voice clip, for instance in a flashback, add the Asubboost effect (on audio clips) or Fsync (on video clips) to that clip to force subtitle generation for it.
 
+"Asubboost" and "Fsync" were also chosen as mnemonics: "A subtitle boost" and "Force synchronization"
+
+#### Compatibility of the script with other projects
+
+This script is not made specifically for Dragon Ball Z Recut. Actually, it can be compatible with any project made with kdenlive, but you will have to either : 
+- Edit the script "Extract_timecodes.py" located in _dependencies folder, so that it doesn't look for audio files named "video synced", and replace that by another phrase unique to your own filenames
+- Or, rename your video or audio tracks and include "video synced" in their filenames
 
 </details>
