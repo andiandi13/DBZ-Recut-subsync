@@ -1,0 +1,9 @@
+# Paste your source folders or .ass paths here (one path per line)
+
+# Notes:
+# You can paste paths with or without quotation marks.
+# Empty lines are ignored.
+# Save the file in UTF-8 if your paths contain accented characters (recent versions of Notepad do this by default).
+
+# Path list:
+
