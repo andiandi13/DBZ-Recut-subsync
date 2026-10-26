@@ -11,23 +11,46 @@ SUBTITLES_FOLDER = os.path.join(PARENT_FOLDER, 'subtitles')
 TIMECODES_FOLDER = os.path.join(PARENT_FOLDER, 'timecodes')
 
 # Fichier texte optionnel listant des dossiers (ou fichiers .ass) supplémentaires à analyser
-# Un chemin par ligne, les lignes vides et celles commençant par # sont ignorées
+# Un chemin par ligne, avec un alias optionnel après un "|" pour nommer le dossier de sortie :
+#     W:\Mon dossier source très long | Alias
+# Les lignes vides et celles commençant par # sont ignorées
 LINKS_FILE = os.path.join(SUBTITLES_FOLDER, 'links.txt')
 
 
 # --- Gestion des dossiers supplémentaires (links.txt) ---
+def clean_alias(alias):
+    """Rend un alias utilisable comme nom de dossier (caractères interdits remplacés par _)."""
+    if not alias:
+        return None
+    alias = re.sub(r'[\\/:*?"<>|]', '_', alias)
+    alias = alias.strip(' .')  # Windows refuse les noms finissant par un espace ou un point
+    return alias or None
+
+
 def read_links_file(links_filepath):
-    """Lit links.txt : un chemin par ligne. Ignore les lignes vides et celles commençant par #."""
-    paths = []
+    """
+    Lit links.txt : un chemin par ligne, avec un alias optionnel après un "|".
+    Ignore les lignes vides et celles commençant par #.
+    Retourne une liste de tuples (chemin, alias ou None).
+    """
+    entries = []
     if not os.path.isfile(links_filepath):
-        return paths
+        return entries
     with open(links_filepath, 'r', encoding='utf-8-sig') as f:  # utf-8-sig gère le BOM du Bloc-notes
         for line in f:
-            line = line.strip().strip('"')  # enlève les guillemets ("Copier comme chemin" en ajoute)
+            line = line.strip()
             if not line or line.startswith('#'):
                 continue
-            paths.append(os.path.expandvars(line))
-    return paths
+            alias = None
+            if '|' in line:
+                # "|" est interdit dans les noms de fichiers Windows : il sépare sans ambiguïté
+                line, alias_part = line.rsplit('|', 1)
+                alias = clean_alias(alias_part.strip().strip('"').strip())
+            path = line.strip().strip('"').strip()  # enlève les guillemets ("Copier comme chemin" en ajoute)
+            if not path:
+                continue
+            entries.append((os.path.expandvars(path), alias))
+    return entries
 
 
 def collect_ass_files(root_folder):
@@ -35,8 +58,9 @@ def collect_ass_files(root_folder):
     Collecte les .ass du dossier (récursif) + ceux des chemins listés dans links.txt.
     Retourne une liste de tuples (chemin_du_fichier_ass, dossier_relatif_de_sortie).
 
-    Les dossiers issus de links.txt sont sortis dans _links\\<nom>, où <nom> est le nom du
-    dossier, suffixé par _2, _3, ... si un autre dossier de links.txt porte le même nom.
+    Les dossiers issus de links.txt sont sortis dans _links\\<nom>, où <nom> est l'alias donné
+    dans links.txt, ou à défaut le nom du dossier source. Le nom est suffixé par _2, _3, ...
+    si un autre dossier de links.txt porte le même nom (ou le même alias).
     """
     entries = {}  # clé = chemin réel normalisé (dédoublonnage), valeur = (chemin, dossier relatif)
 
@@ -49,11 +73,11 @@ def collect_ass_files(root_folder):
     assigned_names = {}   # chemin réel du dossier source -> nom attribué
     used_names = set()    # noms déjà pris (en minuscules, Windows est insensible à la casse)
 
-    def get_unique_name(folder):
+    def get_unique_name(folder, alias=None):
         key = os.path.normcase(os.path.realpath(folder))
-        if key in assigned_names:
+        if key in assigned_names:  # même dossier listé plusieurs fois : le premier nom/alias est gardé
             return assigned_names[key]
-        base = os.path.basename(os.path.abspath(folder).rstrip('\\/'))
+        base = alias or os.path.basename(os.path.abspath(folder).rstrip('\\/'))
         if not base:  # racine d'un lecteur, ex. "W:\"
             base = os.path.splitdrive(os.path.abspath(folder))[0].replace(':', '') or 'root'
         name = base
@@ -65,16 +89,16 @@ def collect_ass_files(root_folder):
         assigned_names[key] = name
         return name
 
-    for path in read_links_file(LINKS_FILE):
+    for path, alias in read_links_file(LINKS_FILE):
         if os.path.isdir(path):
-            name = get_unique_name(path)
+            name = get_unique_name(path, alias)
             for f in glob(os.path.join(glob_escape(path), '**', '*.ass'), recursive=True):
                 inside = os.path.relpath(os.path.dirname(f), path)
                 rel = os.path.join("_links", name) if inside == '.' else os.path.join("_links", name, inside)
                 key = os.path.normcase(os.path.realpath(f))
                 entries.setdefault(key, (f, rel))
         elif os.path.isfile(path) and path.lower().endswith('.ass'):
-            name = get_unique_name(os.path.dirname(os.path.abspath(path)))
+            name = get_unique_name(os.path.dirname(os.path.abspath(path)), alias)
             key = os.path.normcase(os.path.realpath(path))
             entries.setdefault(key, (path, os.path.join("_links", name)))
         else:
