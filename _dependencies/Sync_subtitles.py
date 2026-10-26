@@ -1,6 +1,6 @@
 import os
 import re
-from glob import glob
+from glob import glob, escape as glob_escape
 from datetime import datetime
 
 # Parent folder of the current folder
@@ -9,6 +9,79 @@ PARENT_FOLDER = os.path.dirname(os.getcwd())
 # Chemins relatifs modifiés pour pointer vers le dossier parent
 SUBTITLES_FOLDER = os.path.join(PARENT_FOLDER, 'subtitles')
 TIMECODES_FOLDER = os.path.join(PARENT_FOLDER, 'timecodes')
+
+# Fichier texte optionnel listant des dossiers (ou fichiers .ass) supplémentaires à analyser
+# Un chemin par ligne, les lignes vides et celles commençant par # sont ignorées
+LINKS_FILE = os.path.join(SUBTITLES_FOLDER, 'links.txt')
+
+
+# --- Gestion des dossiers supplémentaires (links.txt) ---
+def read_links_file(links_filepath):
+    """Lit links.txt : un chemin par ligne. Ignore les lignes vides et celles commençant par #."""
+    paths = []
+    if not os.path.isfile(links_filepath):
+        return paths
+    with open(links_filepath, 'r', encoding='utf-8-sig') as f:  # utf-8-sig gère le BOM du Bloc-notes
+        for line in f:
+            line = line.strip().strip('"')  # enlève les guillemets ("Copier comme chemin" en ajoute)
+            if not line or line.startswith('#'):
+                continue
+            paths.append(os.path.expandvars(line))
+    return paths
+
+
+def collect_ass_files(root_folder):
+    """
+    Collecte les .ass du dossier (récursif) + ceux des chemins listés dans links.txt.
+    Retourne une liste de tuples (chemin_du_fichier_ass, dossier_relatif_de_sortie).
+
+    Les dossiers issus de links.txt sont sortis dans _links\\<nom>, où <nom> est le nom du
+    dossier, suffixé par _2, _3, ... si un autre dossier de links.txt porte le même nom.
+    """
+    entries = {}  # clé = chemin réel normalisé (dédoublonnage), valeur = (chemin, dossier relatif)
+
+    # 1) Fichiers du dossier subtitles : on garde l'arborescence d'origine
+    for f in glob(os.path.join(glob_escape(root_folder), '**', '*.ass'), recursive=True):
+        key = os.path.normcase(os.path.realpath(f))
+        entries.setdefault(key, (f, os.path.relpath(os.path.dirname(f), root_folder)))
+
+    # 2) Fichiers venant de links.txt, avec un nom de dossier unique par source
+    assigned_names = {}   # chemin réel du dossier source -> nom attribué
+    used_names = set()    # noms déjà pris (en minuscules, Windows est insensible à la casse)
+
+    def get_unique_name(folder):
+        key = os.path.normcase(os.path.realpath(folder))
+        if key in assigned_names:
+            return assigned_names[key]
+        base = os.path.basename(os.path.abspath(folder).rstrip('\\/'))
+        if not base:  # racine d'un lecteur, ex. "W:\"
+            base = os.path.splitdrive(os.path.abspath(folder))[0].replace(':', '') or 'root'
+        name = base
+        n = 2
+        while name.lower() in used_names:
+            name = f"{base}_{n}"
+            n += 1
+        used_names.add(name.lower())
+        assigned_names[key] = name
+        return name
+
+    for path in read_links_file(LINKS_FILE):
+        if os.path.isdir(path):
+            name = get_unique_name(path)
+            for f in glob(os.path.join(glob_escape(path), '**', '*.ass'), recursive=True):
+                inside = os.path.relpath(os.path.dirname(f), path)
+                rel = os.path.join("_links", name) if inside == '.' else os.path.join("_links", name, inside)
+                key = os.path.normcase(os.path.realpath(f))
+                entries.setdefault(key, (f, rel))
+        elif os.path.isfile(path) and path.lower().endswith('.ass'):
+            name = get_unique_name(os.path.dirname(os.path.abspath(path)))
+            key = os.path.normcase(os.path.realpath(path))
+            entries.setdefault(key, (path, os.path.join("_links", name)))
+        else:
+            print(f"Chemin ignoré (introuvable ou non pertinent) : {path}")
+
+    return list(entries.values())
+
 
 # Fonction pour lire les timecodes depuis un fichier texte
 def read_timecodes_from_txt(txt_filepath):
@@ -191,7 +264,8 @@ def update_ass_timecodes(ass_filepath, timecodes, output_subfolder):
 
 # --- Fonction principale ---
 def main():
-    ass_files = glob(os.path.join(SUBTITLES_FOLDER, '**', '*.ass'), recursive=True)
+    # (chemin .ass, dossier relatif de sortie) : subtitles + chemins listés dans links.txt
+    ass_entries = collect_ass_files(SUBTITLES_FOLDER)
     txt_files = glob(os.path.join(TIMECODES_FOLDER, '*', '*.txt'))
 
     for txt_file in txt_files:
@@ -201,14 +275,13 @@ def main():
             continue
         txt_number = txt_number_match.group(1)
 
-        matching_ass_files = [f for f in ass_files
+        matching_ass_files = [(f, rel) for f, rel in ass_entries
                               if re.search(r'(\d+)', os.path.basename(f))
                               and re.search(r'(\d+)', os.path.basename(f)).group(1) == txt_number]
 
         if matching_ass_files:
             timecodes = read_timecodes_from_txt(txt_file)
-            for ass_file in matching_ass_files:
-                relative_dir = os.path.relpath(os.path.dirname(ass_file), SUBTITLES_FOLDER)
+            for ass_file, relative_dir in matching_ass_files:
                 if relative_dir == '.' or relative_dir == '':
                     output_subfolder = os.path.join(PARENT_FOLDER, "synced", subfolder)
                 else:
