@@ -4,15 +4,15 @@
 
 
 
-## What is it ?
+## What is it?
 
-This script allow synchronizing `.ass` subtitles synced to Dragon Box (or other editions with similar synchronization) to the Recut edition of DBZ, which is an abridged version available [here](https://nyaa.si/view/2024827).
+This script allows synchronizing `.ass` subtitles synced to Dragon Box (or other editions with similar synchronization) to the Recut edition of DBZ, which is an abridged version available [here](https://nyaa.si/view/2024827).
 
-Note that it only works with  `.ass` file format.
+Note that it only works with `.ass` file format.
 
 ## Requirements
 
-1. **Install [Python 3](https://www.python.org/downloads/) and check the "Add Python.exe to PATH."** box when installing (if you installed it without checking this box, either look on the internet how to add it to windows PATH manually, or reinstall it)
+1. **Install [Python 3](https://www.python.org/downloads/) and check the "Add Python.exe to PATH."** box when installing (if you installed it without checking this box, either look up how to add it to the Windows PATH manually, or reinstall it)
 2. Then, install `ass` python module (only required to merge subtitles at the end) with this command through Windows cmd.exe or Powershell - not inside Python shell: **`pip install ass`**
 
 ## How to use it?
@@ -21,11 +21,11 @@ Note that it only works with  `.ass` file format.
 
 2. **Place the .ass subtitle files** that you want to sync in the `subtitles` folder. You can put individual .ass files directly at the root of the folder, as well as subfolders containing .ass files (for example, to sync subtitles in different languages). To also sync subtitles stored elsewhere (another drive, a different location), create a `links.txt` file inside the `subtitles` folder and list one path per line, pointing to either a folder or a single .ass file.
 
-3.  **Run the script** `Resync subtitles.py`, this will create multiple folders, namely `timecodes`, `synced` and `subtitles for DBZ Recut`. Only the latter matters, this is where you will find your resynced subtitles when the at the end of the process.
+3.  **Run the script** `Resync subtitles.py`, this will create multiple folders, namely `timecodes`, `synced` and `subtitles for DBZ Recut`. Only the latter matters, this is where you will find your resynced subtitles at the end of the process.
 
 That's it.
    
-   - **Important:** For this script to work, the ass subtitles located in the `subtitles` folder and the `.txt` files in the `timecodes` folder must share the same numbering format (nn or nnn). Since the timecodes fles are automatically named after the broadcast audio tracks, you just have to make sure that your subtitle files are named correctly, for example :
+   - **Important:** For this script to work, the ass subtitles located in the `subtitles` folder and the `.txt` files in the `timecodes` folder must share the same numbering format (nn or nnn). Since the timecodes files are automatically named after the broadcast audio tracks, you just have to make sure that your subtitle files are named correctly, for example:
      `DBZ 185 - Fuji - R2J DVD video synced - Team Mirolo.txt` and `DBZ185DVD.ass` would match.
 Avoid filenames containing numbers other than the episode numbers to prevent issues from occurring.
 
@@ -54,13 +54,32 @@ However, since Kdenlive does not store timeline clips timecodes in its project f
   - The **duration** of each track
   - Their **associated playlist (Track)**
   - The **duration of empty spaces (blank length)** between clips
-  However, when calculated this way, the timecodes were **slightly off**. After analysis,, it appears that each new clip on the timeline loses approximately one video frame (~42ms).
+  However, when calculated this way, the timecodes were **slightly off**. After analysis, it appears that each new clip on the timeline loses approximately one video frame (~42ms).
   **Workaround:** To compensate, each clip's placement timecode is shifted +42ms per clip position (e.g., +42ms at position 1, +84ms at position 2, etc.).
   This adjustment results in **pretty accurate** timecodes. Some subtitles may still be off by **one or two video frames**, but overall synchronization remains good. If frame-perfect synchronization isn't required, the result is excellent. 
 
+#### Local folder links support
+
+Instead of copying your `.ass` files or folders into `subtitles`, you can list their paths in a `links.txt` file placed inside the `subtitles` folder:
+
+- One path per line, with or without quotation marks.
+- Empty lines and lines starting with `#` are ignored.
+- Each path can point to a folder (scanned recursively) or to a single `.ass` file.
+- Local drives, mapped drives and network shares (e.g. `\\NAS\share\subs`) work. URLs and FTP addresses are not supported.
+- Save the file in UTF-8 if your paths contain accented characters.
+- Characters not allowed in Windows folder names (`\ / : * ? " < > |`) are replaced by `_`.
+- If several entries end up with the same name, a numbered suffix is added (`folder`, `folder_2`, ...) so that folders are never merged.
+
+- You can also give a folder a custom output name by adding it after a `|` (with or without spaces around it). For example:
+
+`C:\Dragon Ball Z Recut\English subs\Raw DBZ subs edited for DBZ Recut | DBZ Recut ENG`
+
+The synced files will then be saved in a folder named `DBZ Recut ENG` instead of `Raw DBZ subs edited for DBZ Recut`
+
+
 #### What if a timeline clip is disabled?
 
-If a clip is disabled in kdenlive, subtitles for this clip will still be generated. We've actually used this technique to generate subtitle lines for isolated vocals (a random .wav file which does not have "video synced" in its name), that we aligned with a disabled audio clip containing the same voice so that it syncs the associated subtitle line :
+If a clip is disabled in kdenlive, subtitles for this clip will still be generated. We've actually used this technique to generate subtitle lines for isolated vocals (a random .wav file which does not have "video synced" in its name), that we aligned with a disabled audio clip containing the same voice so that it syncs the associated subtitle line:
 
 <img width="500" height="474" alt="DBZR026" src="https://github.com/user-attachments/assets/c64ec0c0-33de-488f-a35f-7075928355d5" />
 
@@ -81,7 +100,7 @@ By default, the script won't generate subtitle lines for duplicated clips (as a 
 
 #### Compatibility of the script with other projects
 
-This script is not made specifically for Dragon Ball Z Recut. Actually, it can be compatible with any project made with kdenlive, but you will have to either : 
+This script is not made specifically for Dragon Ball Z Recut. Actually, it can be compatible with any project made with kdenlive, but you will have to either: 
 - Edit the script "Extract_timecodes.py" located in _dependencies folder, so that it doesn't look for audio files named "video synced", and replace that by another phrase unique to your own filenames
 - Or, rename your video or audio tracks and include "video synced" in their filenames
 
